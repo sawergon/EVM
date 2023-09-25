@@ -41,9 +41,11 @@ node *insert(node *p, tree_data k);
 
 node *findmin(node *p);
 
+node *find_name(node *p, const std::string & name);
+
 node *removemin(node *p);
 
-node *remove(node *p, int k);
+node *remove(node *p, const std::string &k);
 
 void delete_tree(node **tree);
 #endif //AVLTREE__ALVTREE_H_
