@@ -1,0 +1,15 @@
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\bin\Debug\net7.0\phoneBook.exe
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\bin\Debug\net7.0\phoneBook.deps.json
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\bin\Debug\net7.0\phoneBook.runtimeconfig.json
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\bin\Debug\net7.0\phoneBook.dll
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\bin\Debug\net7.0\phoneBook.pdb
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.csproj.AssemblyReference.cache
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.AssemblyInfoInputs.cache
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.AssemblyInfo.cs
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.csproj.CoreCompileInputs.cache
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.dll
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\refint\phoneBook.dll
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.pdb
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\phoneBook.genruntimeconfig.cache
+C:\Users\Alex\RiderProjects\EVM\phoneBook\phoneBook\phoneBook\obj\Debug\net7.0\ref\phoneBook.dll
