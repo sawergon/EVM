@@ -2,14 +2,6 @@
 
 namespace phoneBook;
 
-internal enum Codes
-{
-    Add = 1,
-    Del = 2,
-    Show = 3,
-    Exit = 4
-}
-
 class Program
 {
     static void Main()
@@ -29,7 +21,7 @@ class Program
             code = Console.ReadLine();
             if (code.Length > 1)
             {
-                Console.WriteLine("Повторите ввод");
+                Console.WriteLine("Повторите вв");
                 continue;
             }
             switch (code[0])
@@ -37,12 +29,12 @@ class Program
                 case '1':
                 {
                     Console.WriteLine(
-                        "Введите имя подкниги для добавления или оставьте поле пустым для добавления в основную книгу");
+                        "Введите имя подкниги для добавления или оставьте поле пустым для добавленияв основную книгу");
                     var subBookName = Console.ReadLine();
 
 
                     Console.WriteLine(
-                        "Ведите: имя, фамилию, отчество и номер телефона.\n После каждого ввода нажмите Enter");
+                        "Ведите: имя, фамилию, отчество и номер телефона.\n По каждого ввода нажмите Enter");
                     var name = Console.ReadLine();
                     var surname = Console.ReadLine();
                     var secondName = Console.ReadLine();
@@ -69,7 +61,7 @@ class Program
                         "Введите имя для удаления");
                     var name = Console.ReadLine();
                     var subBookName = "";
-                    if (book.Count > 1)
+                    if (book.CountUnderBook >= 1)
                     {
                         Console.WriteLine(
                             "Из какой подкниги удалить. Оставьте поле пустым если удалить из книги");
@@ -99,9 +91,12 @@ class Program
                 {
                     Console.WriteLine("Введите имя для поиска");
                     var name = Console.ReadLine();
-                    var p = new Person();
-                    if (book.FindPerson(name, ref p))
-                        p.Display();
+                    var persons = new LinkedList<Person>();
+                    if (book.FindPerson(name, ref persons))
+                        foreach (var p in persons)
+                        {
+                            p.Display();
+                        }
                     else
                         Console.WriteLine("Такого человека нет");
                     break;

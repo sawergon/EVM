@@ -66,6 +66,13 @@ public class Book
 
     public void AddNewPerson(Person newPerson)
     {
+        foreach (var p in _data)
+        {
+            if (String.Compare(p.Name, newPerson.Name) < 0) 
+                continue;
+            _data.AddBefore(p, newPerson);
+            return;
+        }
         _data.Add(newPerson);
     }
 
@@ -81,24 +88,34 @@ public class Book
         return false;
     }
 
-    public bool FindPerson(string name, ref Person p)
+    public bool FindPerson(string name, ref LinkedList<Person> p)
     {
+        bool res = false;
         foreach (var per in _data)
         {
             if (per.Name != name) continue;
-            p = per;
-            return true;
+            if (p.Any(pe => per == pe))
+            {
+                res = true;
+            }
+            p.Add(per);
+            res = true;
         }
 
-        return false;
+        return res;
     }
 
     public void Display(bool isSub)
     {
         if (isSub)
-            Console.WriteLine("\tПодкнига {0}:", Name);
+            Console.Write("\tПодкнига {0}:", Name);
         else
-            Console.WriteLine("Книга:");
+            Console.Write("Книга:");
+        if (_data.IsEmpty && isSub)
+        {
+            Console.Write(" пуста");
+        }
+        Console.WriteLine();
         var i = 1;
         foreach (var p in _data)
         {
@@ -114,7 +131,7 @@ public class UnderBook
     private Book _dataPerson;
 
     public int Count => _dataBook.Count + _dataPerson.Len;
-
+    public int CountUnderBook => _dataBook.Count;
     private string Name
     {
         get => _dataPerson.Name;
@@ -134,6 +151,12 @@ public class UnderBook
         {
             Name = b
         };
+        foreach (var boo in _dataBook)
+        {
+            if (String.Compare(boo.Name, b) < 0) continue;
+            _dataBook.AddBefore(boo, book);
+            return;
+        }
         _dataBook.Add(book);
     }
 
@@ -176,20 +199,20 @@ public class UnderBook
         return false;
     }
 
-    public bool FindPerson(string name, ref Person per)
+    public bool FindPerson(string name, ref LinkedList<Person> persons)
     {
-        if (_dataPerson.FindPerson(name, ref per)) return true;
+        bool res = _dataPerson.FindPerson(name, ref persons);
         foreach (var book in _dataBook)
         {
-            if (book.FindPerson(name, ref per)) return true;
+            if (book.FindPerson(name, ref persons)) res = true;
         }
 
-        return false;
+        return res;
     }
     
     public void Display(bool isSub = false)
     {
-        if (_dataBook.IsEmpty && _dataPerson.Len == 0)
+        if (_dataBook.IsEmpty && _dataPerson.Len == 0 && !isSub)
             Console.WriteLine("Книга пуста");
         else
         {

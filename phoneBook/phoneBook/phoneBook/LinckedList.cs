@@ -21,7 +21,7 @@ public class LinkedList<T> : IEnumerable<T>  // односвязный спис�
     // добавление элемента
     public void Add(T data)
     {
-        Node<T> node = new Node<T>(data);
+        var node = new Node<T>(data);
  
         if (_head == null)
             _head = node;
@@ -30,6 +30,37 @@ public class LinkedList<T> : IEnumerable<T>  // односвязный спис�
         _tail = node;
  
         Count++;
+    }
+    
+    // добавление элемента после заданного
+    public void AddBefore(T data1, T data2)
+    {
+        var current = _head;
+        var node = new Node<T>(data2);
+        if (current.Next == null || current.Data.Equals(data1))
+        {
+            node.Next = current;
+            _head = node;
+        }
+        else
+        {
+            while (current.Next != null)
+            {
+                if (current.Next.Data.Equals(data1))
+                {
+                    node.Next = current.Next;
+                    current.Next = node;
+                    return;
+                }
+                current = current.Next;
+            }
+
+            if (current.Data.Equals(data1))
+            {
+                node.Next = current.Next;
+                current.Next = node;
+            }
+        }
     }
     // удаление элемента
     public bool Remove(T data)
