@@ -46,8 +46,6 @@ def brezehemAlg(start, end, space):
         point.x += 1
 
 
-# a = Point(np.random.randint(0, sz - 1), np.random.randint(0, sz - 1))
-# b = Point(np.random.randint(0, sz - 1), np.random.randint(0, sz - 1))
 a = Point(5, 5)
 b = Point(10, 10)
 print("start: ", a)
