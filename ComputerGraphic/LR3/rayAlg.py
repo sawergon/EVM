@@ -27,6 +27,7 @@ while n < 10:
         vp[y:y + h, x:x + w] = (r, g, b)
         n += 1
 
+
 plt.axis("off")
 path_color = (155, 155, 155)
 start = Point(0, 0)
