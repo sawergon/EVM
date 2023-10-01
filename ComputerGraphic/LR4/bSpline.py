@@ -13,6 +13,7 @@ print(vertex_y)
 sz = 100
 
 
+
 def xy(i, t, j):
     t0 = t - i
     t02 = t0 * t0
