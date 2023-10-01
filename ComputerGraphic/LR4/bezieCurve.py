@@ -36,3 +36,4 @@ space = np.linspace(0, 1, 50)
 plt.plot(xy(space, 0), xy(space, 1), 'r')
 plt.scatter(vertex_x, vertex_y, s=20)
 plt.show()
+
