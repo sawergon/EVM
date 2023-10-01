@@ -6,6 +6,7 @@ line_color = (0, 0, 0)
 sz = 20
 
 
+
 class Point(object):
     def __init__(self, x, y):
         self.x = x
