@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 background_color = (255, 255, 255)
 # line_color = (0, 0, 0)
 coef = 1
-vertex = np.array([(0, 60 * coef), (20 * coef, 70), (40 * coef, 80), (60 * coef, 80), (80 * coef, 40), (40 * coef, 0),
-                   (20 * coef, 10)])
-vertex_x = np.array([0, 20, 40, 60, 80, 40, 20], dtype="float")
-vertex_y = np.array([60, 70, 80, 80, 40, 0, 10], dtype="float")
 m = 7
+vertex = np.array([(0, 20), (0, 40), (20, 40), (20, 20), (0, 0), (40, 0),
+                   (20, 10)])
+vertex_x = np.array([vertex[i][0] for i in range(m)], dtype="float")
+print(vertex_x)
+vertex_y = np.array([vertex[i][1] for i in range(m)], dtype="float")
+print(vertex_y)
 sz = 100
 
 
