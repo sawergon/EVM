@@ -1,17 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from LR4 import brezenhemAlg
 
-background_color = (255, 255, 255)
-coef = 1
-m = 11
-vertex = np.array([(0, 60), (10, 80), (30, 80), (40, 60), (50, 10), (60, 0),
-                   (75, 30), (80, 70), (0, 60), (10, 80), (30, 80)])
+m = 20
+vertex = np.array([(0, 0) for _ in range(m)])
+sz = 100
+for i in range(m):
+    x = np.random.randint(0, 100)
+    y = np.random.randint(0, 100)
+    vertex[i] = (x, y)
 vertex_x = np.array([vertex[i][0] for i in range(m)], dtype="float")
 print(vertex_x)
 vertex_y = np.array([vertex[i][1] for i in range(m)], dtype="float")
 print(vertex_y)
-sz = 100
 
 
 def xy(i, t, j):
@@ -36,7 +36,12 @@ for i in range(0, m - 3):
         x.append(xy(i, t, 0))
         y.append(xy(i, t, 1))
         t += dt
-# plt.plot(x, y, 'r')
+plt.plot(x, y, 'r')
+
+new_x = [x[i] for i in range(0, len(x), 30)]
+new_y = [y[i] for i in range(0, len(y), 30)]
+
+plt.plot(new_x, new_y, 'b', linewidth=3)
 
 plt.scatter(vertex_x, vertex_y, s=20)
 plt.show()
