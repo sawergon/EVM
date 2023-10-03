@@ -1,0 +1,11 @@
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\bin\Debug\Graph.exe.config
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\bin\Debug\Graph.exe
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\bin\Debug\Graph.pdb
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.csproj.AssemblyReference.cache
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.csproj.SuggestedBindingRedirects.cache
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.Properties.Resources.resources
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.csproj.GenerateResource.cache
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.csproj.CoreCompileInputs.cache
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.exe
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.pdb
+C:\Users\Alex\RiderProjects\EVM\graph\Graph\Graph\obj\Debug\Graph.Form1.resources
