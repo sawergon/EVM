@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.735,C:\Users\Alex\EmbarcaderoProjects\LB\Unit1.cpp=C:\Users\Alex\EmbarcaderoProjects\Lab1\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.735,C:\Users\Alex\EmbarcaderoProjects\LB\Unit1.h=C:\Users\Alex\EmbarcaderoProjects\Lab1\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.979,=C:\Users\Alex\EmbarcaderoProjects\Lab1\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.735,C:\Users\Alex\EmbarcaderoProjects\LB\Unit1.dfm=C:\Users\Alex\EmbarcaderoProjects\Lab1\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.796,C:\Users\Alex\EmbarcaderoProjects\LB\Project1PCH1.h=C:\Users\Alex\EmbarcaderoProjects\Lab1\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.919,C:\Users\Alex\EmbarcaderoProjects\LB\Project1.cbproj=C:\Users\Alex\EmbarcaderoProjects\Lab1\Project1.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.933,=C:\Users\Alex\EmbarcaderoProjects\Lab1\Project1PCH1.h</Transaction>
+    <Transaction>2023.10.06 10:20:49.986,=C:\Users\Alex\EmbarcaderoProjects\LB\Analyzer.cpp</Transaction>
+    <Transaction>2023.10.06 10:20:50.012,=C:\Users\Alex\EmbarcaderoProjects\LB\avlTree.cpp</Transaction>
+    <Transaction>2023.10.06 10:21:35.428,=C:\Users\Alex\EmbarcaderoProjects\LB\Analyzer.h</Transaction>
+    <Transaction>2023.10.06 10:21:35.434,=C:\Users\Alex\EmbarcaderoProjects\LB\avlTree.h</Transaction>
+  </Transactions>
+</BorlandProject>
