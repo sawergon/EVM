@@ -134,11 +134,11 @@ vp = np.full((sz, sz, 3), background_color, dtype="uint8")
 
 
 line_color = np.array((np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)))
-sz = 4
-draw_vertex(Point(int(new_y[0]), int(new_x[0])), vp, line_color, sz)
+SIZE = 4
+draw_vertex(Point(int(new_y[0]), int(new_x[0])), vp, line_color, SIZE)
 for i in range(len(new_y) - 1):
     brezehemAlg(Point(int(new_y[i]), int(new_x[i])),
-                Point(int(new_y[i + 1]), int(new_x[i + 1])), vp, True, sz)
+                Point(int(new_y[i + 1]), int(new_x[i + 1])), vp, True, SIZE)
 
 # plt.plot(new_x, new_y, 'b', linewidth=1)
 
