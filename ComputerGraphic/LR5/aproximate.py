@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 background_color = (255, 255, 255)
-line_color = (0, 0, 0)
+line_color = np.array((0, 0, 0))
 m = 8
 vertex = np.array([(0, 0) for _ in range(m)])
 sz = 200
@@ -54,17 +54,33 @@ def xy(t, j):
     return bt
 
 
-def draw_vertex(point, space, color):
-    for i in range(point.x - 2, point.x + 2):
-        for j in range(point.y - 2, point.y + 2):
+def draw_vertex(point, space, color, size=1):
+    sz = size - size // 2 - size // 4
+    for i in range(point.x - 2 - sz, point.x + 2 + sz):
+        for j in range(point.y - 2 - sz, point.y + 2 + sz):
             space[i][j] = color
 
 
-def brezehemAlg(start, end, space):
-    line_color = (np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255))
+def distance(first, second):
+    return np.sqrt((first.x - second.x) ** 2 + (first.y - second.y) ** 2)
+
+
+def colored_col(space, x, y, size, color):
+    for i in range(size):
+        space[x][y+i] = color
+
+
+def brezehemAlg(start, end, space, is_colored=False, size=1):
+    global line_color
+    if is_colored:
+        new_line_color = np.array((np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)))
+    else:
+        line_color = (0, 0, 0)
     steep = abs(end.y - start.y) > abs(end.x - start.x)
-    draw_vertex(start, space, line_color)
-    draw_vertex(end, space, line_color)
+    if is_colored:
+        draw_vertex(end, space, new_line_color, size)
+    else:
+        draw_vertex(end, space, line_color, size)
     if steep:
         start.x, start.y = start.y, start.x
         end.x, end.y = end.y, end.x
@@ -78,19 +94,26 @@ def brezehemAlg(start, end, space):
     d = -dx
     y_step = 1 if start.y < end.y else -1
     point = Point(start.x, start.y)
+    dist = distance(start, end)
     while point.x < end.x:
         if steep:
             xp, yp = point.y, point.x
         else:
             xp, yp = point.x, point.y
-        space[xp, yp] = line_color
-        # print(point)
+        if is_colored:
+            t = distance(start, point) / dist
+            color = (1 - t) * line_color + t * new_line_color
+            colored_col(space, xp, yp, size, color)
+        else:
+            colored_col(space, xp, yp, size, line_color)
         d += dy2
         if d > 0:
             point.y += y_step
             d -= dx2
         point.x += 1
-    # draw_vertex(end, space, line_color)
+    if is_colored:
+        line_color = new_line_color
+
 
 t = 0.0
 dt = 0.01
@@ -109,9 +132,13 @@ print(new_x)
 print(new_y)
 vp = np.full((sz, sz, 3), background_color, dtype="uint8")
 
+
+line_color = np.array((np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)))
+sz = 4
+draw_vertex(Point(int(new_y[0]), int(new_x[0])), vp, line_color, sz)
 for i in range(len(new_y) - 1):
     brezehemAlg(Point(int(new_y[i]), int(new_x[i])),
-                Point(int(new_y[i + 1]), int(new_x[i + 1])), vp)
+                Point(int(new_y[i + 1]), int(new_x[i + 1])), vp, True, sz)
 
 # plt.plot(new_x, new_y, 'b', linewidth=1)
 
