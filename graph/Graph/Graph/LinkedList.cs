@@ -1,4 +1,6 @@
-﻿namespace Graph
+﻿using System;
+
+namespace Graph
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -32,6 +34,17 @@
             _tail = node;
 
             Count++;
+        }
+
+        public void Out()
+        {
+            var current = _head;
+            while (current.Next != null)
+            {
+                Console.Write(current.Data + " ");
+                current = current.Next;
+            }
+            Console.WriteLine(current.Data);
         }
 
         // добавление элемента после заданного
