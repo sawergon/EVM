@@ -14,16 +14,32 @@ namespace Graph
         [STAThread]
         static void Main()
         {
-            var s = new Stack();
-            s.Push(5);
-            s.Push(6);
-            s.Push(7);
-            Console.WriteLine(s.Pop());
-            Console.WriteLine(s.Pop());
-            Console.WriteLine(s.Pop());
-            // Application.EnableVisualStyles();
-            // Application.SetCompatibleTextRenderingDefault(false);
-            // Application.Run(new Form1());
+            // var gr = new GraphList(10);
+            // gr.AddLink(0, 1);
+            // gr.AddLink(0, 4);
+            // gr.AddLink(0, 5);
+            // gr.AddLink(1, 2);
+            // gr.AddLink(1, 6);
+            // gr.AddLink(2, 3);
+            // gr.AddLink(2, 7);
+            // gr.AddLink(3, 8);
+            // gr.AddLink(3, 4);
+            // gr.AddLink(4, 9);
+            // gr.AddLink(5, 7);
+            // gr.AddLink(5, 8);
+            // gr.AddLink(6, 8);
+            // gr.AddLink(6, 9);
+            // gr.AddLink(7, 9);
+            //
+            //
+            // Reb r1 = new Reb(1, 2), r2 = new Reb(3, 4);
+            // int vn = 0, vk = 5;
+            //
+            // var res = gr.FindPaths(r1, r2, vn, vk);
+            //
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());
         }
     }
 }

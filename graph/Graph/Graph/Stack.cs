@@ -14,6 +14,33 @@ namespace Graph
             _data = new int[_capacity];
         }
 
+        public LinkedList<int> ToList()
+        {
+            var a = new LinkedList<int>();
+            for (var i = 0; i < _len; i++)
+            {
+                a.Add(_data[i]);
+            }
+
+            return a;
+        }
+
+        public void Copy(Stack st)
+        {
+            while (this._capacity < st._len)
+            {
+                this._capacity *= 2;
+            }
+
+            Array.Resize(ref this._data, this._capacity);
+            this._len = st._len;
+
+            for (var i = 0; i < st._len; i++)
+            {
+                this._data[i] = st._data[i];
+            }
+        }
+
         public void Push(int value)
         {
             _data[_len++] = value;

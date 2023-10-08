@@ -52,7 +52,7 @@
         <Compile Include="Form1.Designer.cs">
             <DependentUpon>Form1.cs</DependentUpon>
         </Compile>
-        <Compile Include="Graph.cs" />
+        <Compile Include="GraphList.cs" />
         <Compile Include="LinkedList.cs" />
         <Compile Include="Program.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
