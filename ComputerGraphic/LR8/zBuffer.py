@@ -132,10 +132,10 @@ bg_clr = (255, 255, 255)
 vp = np.full((s, s, 3), bg_clr)
 buff = np.full((s, s), -math.inf)
 
-vertexes = [(20, 10, 0), (140, 50, 0), (60, 70, -2)]
+vertexes = [(20, 10, -2), (140, 50, 2), (60, 70, 2)]
 ZBuffer(vertexes, vp, buff, (0, 0, 255))
 
-vertexes = [(10, 40, 0), (100, 10, 0), (120, 70, 0)]
+vertexes = [(10, 40, 0), (100, 10, 1), (120, 70, 0)]
 ZBuffer(vertexes, vp, buff, (255, 0, 0))
 
 plt.axis('off')
