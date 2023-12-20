@@ -120,8 +120,7 @@ int an_arithmetic_action(Stack &stack, lexeme &lx) {
 int an_arithmetic_list_action(Stack &stack, lexeme &lx) {
   int result = AN_COMMAND_ACCEPT;
   switch (lx.key) {
-    case ID_BREAK:
-    case ID_END_STRING: {
+    case ID_BREAK: {
       result = rule_11(stack);
       break;
     }
@@ -154,8 +153,7 @@ int an_arithmetic_end_list_action(Stack &stack, lexeme &lx) {
   int result = AN_COMMAND_ACCEPT;
   switch (lx.key) {
     case ID_BREAK:
-    case ID_SUM:
-    case ID_END_STRING: {
+    case ID_SUM: {
       result = rule_14(stack);
       break;
     }
