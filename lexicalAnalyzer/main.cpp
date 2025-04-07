@@ -34,7 +34,7 @@ const char *convert_code(int code) {
     return "TYPE_TRASH";
 }
 
-void printTable(const node *tree) {
+void printTable1(const node *tree) {
     if (tree->left) {
         printTable(tree->left);
     }

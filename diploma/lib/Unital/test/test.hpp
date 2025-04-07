@@ -1,0 +1,7 @@
+
+#ifndef DIPLOMA_LIB_UNITAL_TEST_TEST_HPP_
+#define DIPLOMA_LIB_UNITAL_TEST_TEST_HPP_
+
+#include <gtest/gtest.h>
+
+#endif //DIPLOMA_LIB_UNITAL_TEST_TEST_HPP_
