@@ -473,6 +473,11 @@ export class PGpl2 {
       , isCached( isCached )
       , gen( std::move( general ) ) {
     field.setGen( gen );
+    setPgParams();
+    if ( isCached ) {
+      block_cache.reserve( v );
+      dual_block_cache.reserve(v);
+    }
   }
   explicit PGpl2( long p, long l, bool isCached = false,
                   NTL::ZZ_pEX general = NTL::ZZ_pEX( 0 ) )
@@ -480,10 +485,17 @@ export class PGpl2 {
       , gen( std::move( general ) ) {
     field = Fpld( p, l, 2 );
     field.setGen( gen );
+    setPgParams();
     if ( isCached ) {
-      block_cache.reserve( field.size() );
+      block_cache.reserve( v );
+      dual_block_cache.reserve(v);
     }
   }
+
+  PGBlock operator[] (const BlockId& id) {
+    return this->operator[](id.to_int());
+  }
+
   PGBlock operator[]( long i ) {
 
     if ( isCached ) {
@@ -499,6 +511,10 @@ export class PGpl2 {
       block_cache[i % block_cache.size()].isPublished = true;
     }
     return result;
+  }
+
+  PGDualBlock operator()(const DualBlockId& id) {
+    return this->operator()(id.to_int());
   }
 
   PGDualBlock operator()( long i ) {
@@ -517,10 +533,18 @@ export class PGpl2 {
     return result;
   }
 
-  long size() { return field.size(); }
+  long size() { return v; }
   ~PGpl2() = default;
 
   private:
+  void setPgParams() {
+    long n = field.size();
+    v      = n * n + n + 1;
+    r      = n + 1;
+    k      = n + 1;
+    lambda = 1;
+  }
+  long                               v, r, k, lambda;
   NTL::ZZ_pEX                        gen;               /// Образующий
   Fpld                               field;             /// Поле
   bool                               isCached = false;  /// Кэшировать значения

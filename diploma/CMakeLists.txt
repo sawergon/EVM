@@ -7,6 +7,7 @@ add_subdirectory(lib/Unital)
 add_subdirectory(lib/F_pld)
 add_subdirectory(lib/PGpl2)
 add_subdirectory(lib/PP)
+add_subdirectory(lib/F_pl)
 
 add_executable(diploma main.cpp)
 target_link_libraries(diploma flint gmp mpfr)
