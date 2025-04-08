@@ -24,6 +24,6 @@ target_link_libraries(fpld PRIVATE ntl gmp)
 
 #include(GoogleTest)
 #gtest_discover_tests(test_fpld)
-
+# TODO need delete if used outside this repo
 add_executable(test_fpld main.cpp)
 target_link_libraries(test_fpld fpld stdc++fs)

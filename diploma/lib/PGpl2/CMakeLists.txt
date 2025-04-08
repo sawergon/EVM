@@ -26,6 +26,6 @@ target_link_libraries(pgpl2 PRIVATE fpld)
 
 #include(GoogleTest)
 #gtest_discover_tests(test_fpld)
-
+# TODO need delete if used outside this repo
 add_executable(test_pgpl2 main.cpp)
 target_link_libraries(test_pgpl2 PRIVATE pgpl2)
