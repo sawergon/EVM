@@ -1,5 +1,4 @@
 module;
-#include <map>
 #include <sstream>
 #include <NTL/ZZ_p.h>
 #include <NTL/ZZ_pE.h>
@@ -160,16 +159,31 @@ export class Fpld {
   }
 
   [[nodiscard]] NTL::ZZ_pEX int2Fpld(
-      long num, const NTL::ZZ_pEX &gen = NTL::ZZ_pEX( 0 ) ) const {
+      long num) {
     if ( num == 0 )
       return NTL::ZZ_pEX( 0 );
-    if ( NTL::IsZero( gen ) ) {
-      if (p == 2 && l == 2) {
-        auto gen_ = from_long( 10 );
-        return int2Fpld( num, gen_ );
-      }
+    if (NTL::IsZero(gen)) {
+      gen = from_long( 10 );
     }
     return power( gen, num );
+  }
+
+  void setGen( const NTL::ZZ_pEX &generator ) { gen = generator; }
+
+  [[nodiscard]] NTL::ZZ_pEX getGen() const { return gen; }
+
+  [[nodiscard]] long fpld2int( const NTL::ZZ_pEX &el ) const {
+    if ( NTL::IsZero( el ) )
+      return 0;
+    NTL::ZZ_pEX ell = NTL::ZZ_pEX( 1 );
+    for ( long i = 0; i < n; ++i ) {
+      ell = mul( ell, gen );
+      if ( ell == el )
+        return i + 1;
+    }
+    std::cout << "el = " << to_string(el) << std::endl;
+    std::cout << "gen = " << to_string(gen) << std::endl;
+    throw std::invalid_argument( "Element not found" );
   }
 
   // Пример использования для всех известных случаев:
@@ -195,6 +209,8 @@ export class Fpld {
       }
     }
   }
+
+  long size() const { return n; }
 
   static void setPythonFlag( bool flag ) { is_like_python = flag; }
 
@@ -309,6 +325,7 @@ export class Fpld {
   NTL::ZZ_pEContext  base_ctx;
   NTL::ZZ_pEX        ext_poly;
   NTL::ZZ_pEXModulus mod_ext;
+  NTL::ZZ_pEX        gen = NTL::ZZ_pEX( 0 );
 };
 
 bool Fpld::is_like_python = true;
