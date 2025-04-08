@@ -6,6 +6,8 @@ module;
 export module PGpl2;
 import Fpld;
 
+export class DualBlockId;
+
 export class BlockId {
   public:
   explicit BlockId( Fpld *f = nullptr )
@@ -13,6 +15,7 @@ export class BlockId {
       , x_( 0 )
       , y_( 0 )
       , z_( 0 ) {}
+  bool isValid() const { return field != nullptr; }
   explicit BlockId( long i, Fpld *f )
       : field( f ) {
     if ( i == 0 ) {
@@ -78,6 +81,10 @@ export class BlockId {
     return "[" + field->to_string( x_ ) + ", " + field->to_string( y_ ) + ", " +
            field->to_string( z_ ) + "]";
   }
+
+  DualBlockId intersection( const BlockId &other ) const;
+
+  DualBlockId operator*( const BlockId &other ) const;
   ~BlockId() = default;
 
   private:
@@ -87,6 +94,8 @@ export class BlockId {
   Fpld       *field = nullptr;
 };
 
+export class BlockId;
+
 export class DualBlockId {
   public:
   explicit DualBlockId( Fpld *f = nullptr )
@@ -94,6 +103,7 @@ export class DualBlockId {
       , x_( 0 )
       , y_( 0 )
       , z_( 0 ) {}
+  bool isValid() { return field != nullptr; }
   explicit DualBlockId( long i, Fpld *f )
       : field( f )
       , x_( 0 )
@@ -155,6 +165,10 @@ export class DualBlockId {
            field->to_string( z_ ) + "]";
   }
 
+  BlockId intersection( const DualBlockId &other ) const;
+
+  BlockId operator*( const DualBlockId &other ) const;
+
   bool operator==( const DualBlockId &other ) const {
     return x_ == other.x_ && y_ == other.y_ && z_ == other.z_;
   }
@@ -169,6 +183,91 @@ export class DualBlockId {
   NTL::ZZ_pEX z_    = NTL::ZZ_pEX( 0 );
   Fpld       *field = nullptr;
 };
+
+DualBlockId BlockId::intersection( const BlockId &other ) const {
+  auto zero = NTL::ZZ_pEX( 0 );
+  auto one  = NTL::ZZ_pEX( 1 );
+
+  if ( x_ == zero && other.x_ == zero && ( other.y_ == one || y_ == one ) )
+    return DualBlockId( field, one, zero, zero );
+
+  if ( other.x_ == one && y_ == x_ == zero ) {
+    auto val = field->sub( zero, other.y_ );
+    return DualBlockId{ field, val, one, zero };
+  }
+
+  if ( other.y_ == other.x_ == zero && x_ == one ) {
+    auto val = field->sub( zero, y_ );
+    return DualBlockId{ field, val, one, zero };
+  }
+
+  if ( x_ == other.x_ == zero && y_ == other.y_ == one )
+    return DualBlockId{ field, one, zero, zero };
+
+  if ( x_ == other.y_ == one && other.x_ == zero ) {
+    auto num = field->sub( field->mul( other.z_, y_ ), z_ );
+    auto y   = field->sub( zero, other.z_ );
+    return DualBlockId{ field, num, y, one };
+  }
+
+  if ( y_ == other.x_ == one && x_ == zero ) {
+    auto num = field->sub( field->mul( z_, other.y_ ), other.z_ );
+    auto y   = field->sub( zero, z_ );
+    return DualBlockId{ field, num, y, one };
+  }
+
+  if ( x_ == other.x_ == one && y_ == other.y_ ) {
+    auto val = field->sub( zero, y_ );
+    return DualBlockId{ field, val, one, zero };
+  }
+
+  auto numerator   = field->sub( z_, other.z_ );
+  auto denominator = field->sub( other.y_, y_ );
+  auto y           = field->mul( numerator, field->inv( denominator ) );
+  auto x           = field->sub( zero, field->add( z_, field->mul( y, y_ ) ) );
+
+  return DualBlockId{ field, x, y, one };
+}
+
+DualBlockId BlockId::operator*( const BlockId &other ) const {
+  return intersection( other );
+}
+
+BlockId DualBlockId::intersection( const DualBlockId &other ) const {
+  auto zero = NTL::ZZ_pEX( 0 );
+  auto one  = NTL::ZZ_pEX( 1 );
+
+  if ( z_ == other.z_ == zero && ( y_ == one || other.y_ == one ) )
+    return BlockId( field, zero, zero, one );
+
+  if ( y_ == z_ == zero && other.z_ == one )
+    return BlockId( field, zero, one, field->sub( zero, other.y_ ) );
+
+  if ( other.y_ == other.z_ == zero && z_ == one )
+    return BlockId( field, one, field->sub( zero, y_ ), zero );
+
+  if ( y_ == other.y_ == one && other.z_ == z_ == zero )
+    return BlockId( field, zero, zero, one );
+
+  if ( z_ == other.y_ == one && other.z_ == zero )
+    return BlockId( field, one, field->sub( zero, other.x_ ),
+                    field->sub( field->mul( other.x_, y_ ), x_ ) );
+
+  if ( other.z_ == y_ == one && z_ == zero )
+    return BlockId( field, one, field->sub( zero, x_ ),
+                    field->sub( field->mul( x_, other.y_ ), other.x_ ) );
+
+  if ( z_ == other.z_ == one && y_ == other.y_ )
+    return BlockId( field, zero, one, field->sub( zero, y_ ) );
+  auto y = field->mul( field->sub( x_, other.x_ ),
+                       field->inv( field->sub( other.y_, y_ ) ) );
+  return BlockId( field, one, y,
+                  field->sub( zero, field->add( x_, field->mul( y, y_ ) ) ) );
+}
+
+BlockId DualBlockId::operator*( const DualBlockId &other ) const {
+  return intersection( other );
+}
 
 /// Блок состоит из дуальных блоков
 export class PGBlock {
@@ -249,7 +348,7 @@ export class PGBlock {
       values.emplace_back( field, field->sub( zero, block.y() ), one, zero );
     }
 
-    for ( const auto& el : values ) {
+    for ( const auto &el : values ) {
       indexes.push_back( el.to_int() );
     }
   }
@@ -311,7 +410,7 @@ export class PGDualBlock {
 
   private:
   void internalConstructor() {
-    DualBlockId block{id_.getField()};
+    DualBlockId block{ id_.getField() };
     auto        one  = NTL::ZZ_pEX( 1 );
     auto        zero = NTL::ZZ_pEX( 0 );
 
@@ -329,8 +428,8 @@ export class PGDualBlock {
     if ( id_ == block ) {
       auto subc = field->sub( zero, block.x() );
       for ( int i = 0; i < field->size(); i++ ) {
-        auto gh = BlockId(field, one, subc, field->int2Fpld( i ));
-        values.push_back(gh);
+        auto gh = BlockId( field, one, subc, field->int2Fpld( i ) );
+        values.push_back( gh );
       }
       values.emplace_back( field, zero, zero, one );
     }
@@ -347,7 +446,7 @@ export class PGDualBlock {
       values.emplace_back( field, zero, one, field->sub( zero, block.y() ) );
     }
 
-    for ( const auto& el : values ) {
+    for ( const auto &el : values ) {
       indexes.push_back( el.to_int() );
     }
   }

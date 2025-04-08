@@ -11,7 +11,7 @@ target_sources(pgpl2
         PUBLIC
         FILE_SET CXX_MODULES
         BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
-        FILES src/PGpl2.ixx
+        FILES src/PGpl2.ixx src/BlockId.ixx src/DualBlockId.ixx
 )
 
 target_link_libraries(pgpl2 PRIVATE fpld)
