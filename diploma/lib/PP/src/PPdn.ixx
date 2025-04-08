@@ -358,24 +358,14 @@ struct dual_block_cache {
 
 export class PPdn {
   public:
+      explicit PPdn(long degree, Fpl f, bool isCached = false) : field(f), isCached(isCached) {
+        internal(degree);
+      }
   explicit PPdn( long degree = 2, long p = 2, long l = 1,
                  bool isCached = false )
       : isCached( isCached ) {
     field = Fpl( p, l );
-    n     = NTL::power_long( p, l );
-    if ( degree == 2 ) {
-      v      = n * n + n + 1;
-      k      = n + 1;
-      lambda = 1;
-    } else if ( degree == 3 ) {
-      k      = n * n + n + 1;
-      v      = n * n * n + n * n + n + 1;
-      lambda = n + 1;
-    }
-    if ( isCached ) {
-      blocks.reserve( v );
-      dual_blocks.reserve( v );
-    }
+    internal(degree);
   }
 
   PPBlock operator[]( long i ) {
@@ -420,6 +410,23 @@ export class PPdn {
   long size() { return v; }
 
   private:
+
+      void internal(long degree) {
+        n     = field.size();
+        if ( degree == 2 ) {
+          v      = n * n + n + 1;
+          k      = n + 1;
+          lambda = 1;
+        } else if ( degree == 3 ) {
+          k      = n * n + n + 1;
+          v      = n * n * n + n * n + n + 1;
+          lambda = n + 1;
+        }
+        if ( isCached ) {
+          blocks.reserve( v );
+          dual_blocks.reserve( v );
+        }
+      }
   long                          v, k, lambda, n;
   Fpl                           field;
   bool                          isCached = false;

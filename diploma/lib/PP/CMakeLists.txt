@@ -15,7 +15,9 @@ target_sources(ppdn
 )
 
 #find_package(GTest REQUIRED)
-#
+
+target_link_libraries(ppdn PRIVATE fpl)
+
 #target_link_libraries(field PRIVATE ntl gmp)
 #
 #add_compile_options("-g")
@@ -26,4 +28,4 @@ target_sources(ppdn
 #gtest_discover_tests(test_fpld)
 
 add_executable(test_ppdn main.cpp)
-target_link_libraries(test_ppdn PRIVATE ppdn)
+target_link_libraries(test_ppdn PRIVATE ppdn fpl)
