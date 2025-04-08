@@ -32,13 +32,20 @@ export class UnitalBlock : public PGBlock {
   public:
   UnitalBlock() = default;
   [[nodiscard]] bool isEmpty() const { return values.empty(); }
+  /// может быть пустой результат так как не все BlockId являются частью
+  /// Юнитального дизайна
   explicit UnitalBlock( const BlockId &id )
       : id_( id ) {
     UnitalBlock::internalConstructor();
   }
 
   explicit UnitalBlock( long i, Fpld *field ) {
-    id_ = BlockId( i, field );
+    /// Поиск первого подходящего идентификатора
+    auto id = BlockId( i, field );
+    while ( hermitFilter( id ) ) {
+      id = BlockId( ++i, field );
+    }
+    id_ = id;
     UnitalBlock::internalConstructor();
   }
 
@@ -81,7 +88,11 @@ export class UnitalDualBlock : public PGDualBlock {
   }
 
   UnitalDualBlock( long i, Fpld *field ) {
-    id_ = DualBlockId( i, field );
+    auto id = DualBlockId( i, field );
+    while (!hermitFilter(id)) {
+      id = DualBlockId(++i, field);
+    }
+    id_ = id;
     internalConstructor();
   }
 
@@ -130,13 +141,15 @@ export class Unital {
       , isCached( isCached )
       , gen( std::move( general ) ) {
     field.setGen( gen );
+    setParams();
   }
   explicit Unital( long p, long l, bool isCached = false,
                    NTL::ZZ_pEX general = NTL::ZZ_pEX( 0 ) )
       : isCached( isCached )
       , gen( std::move( general ) ) {
-    field = Fpld( p, l, 2 );
+    field = Fpld( p, l, d );
     field.setGen( gen );
+    setParams();
     if ( isCached ) {
       block_cache.reserve( field.size() );
     }
@@ -174,13 +187,71 @@ export class Unital {
     return result;
   }
 
-  long size() { return field.size(); }
+  BlockId getBlockId(long i) {
+    auto id = BlockId(i, &field);
+    while ( hermitFilter(id)) {
+      id = BlockId(i, &field);
+    }
+    return id;
+  }
+
+  DualBlockId getDualBlockId(long i) {
+    auto id = DualBlockId(i, &field);
+    while (!hermitFilter(id)) {
+      id = DualBlockId(++i, &field);
+    }
+    return id;
+  }
+
+  long size() const { return b; }
+  long getN() const { return n; }
+  /// размер параллельного класса Юнитала
+  long getS() const { return s; }
+  Fpld getField() const { return field; }
+
+  bool operator==( const Unital &other ) {
+    return b == other.n && db == other.db && s == other.s && n == other.n &&
+           d == other.d && gen == other.gen && field == other.field;
+  }
+
+  bool operator!=( const Unital &other ) { return !( *this == other ); }
+
+  Unital &operator=( const Unital &other ) {
+    if ( *this == other )
+      return *this;
+    b        = other.b;
+    db       = other.db;
+    s        = other.s;
+    n        = other.n;
+    d        = other.d;
+    gen      = other.gen;
+    field    = other.field;
+    isCached = other.isCached;
+    if ( isCached ) {
+      block_cache.reserve( b );
+      dual_block_cache.reserve( db );
+    }
+    return *this;
+  }
+
   ~Unital() = default;
 
   private:
-  NTL::ZZ_pEX                        gen;               /// Образующий
-  Fpld                               field;             /// Поле
-  bool                               isCached = false;  /// Кэшировать значения
+  void setParams() {
+    n = field.size() / d;  /// Поскольку юнитал над квадратичным расширенией
+    b = NTL::power_long( n, 4 ) - NTL::power_long( n, 3 ) +
+        NTL::power_long( n, 2 );
+    s  = b / n;
+    db = NTL::power_long( n, 3 ) + 1;
+  }
+  long        b;      /// колво блоков
+  long        db;     /// колво дуальных блоков
+  long        s;      /// размер параллельного класса
+  long        n;      /// p^l
+  long        d = 2;  /// расширение в данном случае всегда квадратичное
+  NTL::ZZ_pEX gen;    /// Образующий
+  Fpld        field;  /// Поле
+  bool        isCached = false;                         /// Кэшировать значения
   std::vector<block_cache_page>      block_cache;       /// Кэш
   std::vector<dual_block_cache_page> dual_block_cache;  /// Кэш
 };

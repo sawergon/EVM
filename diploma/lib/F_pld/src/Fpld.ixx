@@ -29,7 +29,7 @@ export class Fpld {
 
     mod_ext = NTL::ZZ_pEXModulus( ext_poly );
 
-    n = NTL::power_long( p, l * d );
+    n = NTL::power_long( p, NTL::power_long( l, d ) );
   }
 
   [[nodiscard]] NTL::ZZ_pEX from_long( long num ) const {
@@ -158,11 +158,10 @@ export class Fpld {
     return res;
   }
 
-  [[nodiscard]] NTL::ZZ_pEX int2Fpld(
-      long num) {
+  [[nodiscard]] NTL::ZZ_pEX int2Fpld( long num ) {
     if ( num == 0 )
       return NTL::ZZ_pEX( 0 );
-    if (NTL::IsZero(gen)) {
+    if ( NTL::IsZero( gen ) ) {
       gen = from_long( 10 );
     }
     return power( gen, num );
@@ -181,8 +180,8 @@ export class Fpld {
       if ( ell == el )
         return i + 1;
     }
-    std::cout << "el = " << to_string(el) << std::endl;
-    std::cout << "gen = " << to_string(gen) << std::endl;
+    std::cout << "el = " << to_string( el ) << std::endl;
+    std::cout << "gen = " << to_string( gen ) << std::endl;
     throw std::invalid_argument( "Element not found" );
   }
 
@@ -213,6 +212,20 @@ export class Fpld {
   long size() const { return n; }
 
   static void setPythonFlag( bool flag ) { is_like_python = flag; }
+
+  [[nodiscard]] long getP() const { return p; }
+  [[nodiscard]] long getL() const { return l; }
+  [[nodiscard]] long getD() const { return d; }
+
+  bool operator==( const Fpld &other ) const {
+    return p == other.p && l == other.l && d == other.d && n == other.n &&
+           base_poly == other.base_poly && ext_poly == other.ext_poly &&
+           mod_ext == other.mod_ext && gen == other.gen;
+  }
+
+  bool operator!=(const Fpld& other) const {
+    return !(*this == other);
+  }
 
   private:
   static NTL::ZZ_pX get_fixed_base_poly( long p, long l ) {
