@@ -8,35 +8,51 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <cereal/archives/binary.hpp>
 
 namespace convert {
-  inline std::vector<uint8_t> uint16_t_to_vec(uint16_t v) {
-    std::vector<uint8_t> res;
-    res.push_back(static_cast<uint8_t>(v >> 8));
-    res.push_back(static_cast<uint8_t>(v));
-    return res;
+  template<typename T>
+  std::vector<uint8_t> to_bytes(const T& value) {
+    std::vector<uint8_t> buffer;
+    // Используем специализацию для разных типов
+    if constexpr (std::is_trivially_copyable_v<T>) {
+      // Оптимизированный путь для тривиальных типов
+      buffer.resize(sizeof(T));
+      memcpy(buffer.data(), &value, sizeof(T));
+    } else {
+      // Общий путь через сериализацию
+      std::ostringstream oss;
+      {
+        cereal::BinaryOutputArchive archive(oss);
+        archive(value);
+      }
+      const auto& str = oss.str();
+      buffer.assign(str.begin(), str.end());
+    }
+    return buffer;
   }
 
-  inline std::vector<uint8_t> uint32_t_to_vec(uint32_t v) {
-    std::vector<uint8_t> res;
-    res.push_back(static_cast<uint8_t>(v >> 24));
-    res.push_back(static_cast<uint8_t>(v >> 16));
-    res.push_back(static_cast<uint8_t>(v >> 8));
-    res.push_back(static_cast<uint8_t>(v));
-    return res;
-  }
-
-  inline std::vector<uint8_t> uint64_t_to_vec(uint64_t v) {
-    std::vector<uint8_t> res;
-    res.push_back(static_cast<uint8_t>(v >> 56));
-    res.push_back(static_cast<uint8_t>(v >> 48));
-    res.push_back(static_cast<uint8_t>(v >> 40));
-    res.push_back(static_cast<uint8_t>(v >> 32));
-    res.push_back(static_cast<uint8_t>(v >> 24));
-    res.push_back(static_cast<uint8_t>(v >> 16));
-    res.push_back(static_cast<uint8_t>(v >> 8));
-    res.push_back(static_cast<uint8_t>(v));
-    return res;
+  template<typename T>
+  T from_bytes(const std::vector<uint8_t>& buffer) {
+    if constexpr (std::is_trivially_copyable_v<T>) {
+      // Для тривиально копируемых типов
+      if (buffer.size() != sizeof(T)) {
+        throw std::runtime_error("Buffer size mismatch for trivial type");
+      }
+      T value;
+      memcpy(&value, buffer.data(), sizeof(T));
+      return value;
+    } else {
+      // Для сложных типов через cereal
+      std::string str(buffer.begin(), buffer.end());
+      std::istringstream iss(str);
+      T value;
+      {
+        cereal::BinaryInputArchive archive(iss);
+        archive(value);
+      }
+      return value;
+    }
   }
 }
 

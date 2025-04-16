@@ -15,9 +15,11 @@
 namespace network {
 
   struct MsgHeader {
-    uint16_t keyWord;
-    uint16_t size;
-    uint16_t datagramAmount;
+    uint16_t keyWord{};
+    uint16_t size{};
+    uint16_t datagramAmount{};
+
+    MsgHeader() = default;
 
     MsgHeader( uint16_t keyWord, uint16_t size, uint16_t datagramAmount )
         : keyWord( keyWord )

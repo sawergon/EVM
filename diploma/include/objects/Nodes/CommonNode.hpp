@@ -34,7 +34,7 @@ private:
     network::Endpoint server;
     NodeInfo nodeInfo;
     RecvMode recvMode = RecvMode::WaitHeader;
-    network::MsgHeader nowHeader;
+    network::MsgHeader nowHeader{};
   };
 }  // namespace node::common
 

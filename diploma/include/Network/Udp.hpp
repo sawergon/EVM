@@ -10,6 +10,7 @@
 #include <thread>
 #include <functional>
 #include <iostream>
+#include "msg_headers.hpp"
 
 namespace network {
 
@@ -19,7 +20,7 @@ public:
         : m_ioContext(),
         m_socket(m_ioContext, boost::asio::ip::udp::endpoint(
                                    boost::asio::ip::udp::v4(), port)),
-        m_receiveBuffer(1024) {
+        m_receiveBuffer(DATAGRAM_SIZE) {
       startReceive();
       m_ioThread = std::thread([this](){ m_ioContext.run(); });
     }
@@ -40,6 +41,13 @@ public:
       } catch(const std::exception& e) {
         handleError(e.what());
       }
+    }
+
+    Endpoint getLocalEndpoint() const {
+      return Endpoint{
+          m_socket.local_endpoint().address().to_string(),
+          m_socket.local_endpoint().port()
+      };
     }
 
     void onMessageReceived(MessageCallback callback) override {
@@ -69,7 +77,7 @@ private:
               };
 
               if(m_callback) {
-                m_callback(std::move(data), endpoint);
+                m_callback(data, endpoint);
               }
             }
             startReceive();
