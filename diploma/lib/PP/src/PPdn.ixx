@@ -404,10 +404,18 @@ export class PPdn {
     return result;
   }
 
+  PPBlockId getBlockId(long i) {
+    return { i, &field };
+  }
+
+  PPDualBlockId getDualBlockId(long i) {
+    return {i, &field};
+  }
+
   PPDualBlock operator()( const PPDualBlockId &id ) {
     return this->operator()( id.to_int() );
   }
-  long size() { return v; }
+  [[nodiscard]] long size() const { return v; }
 
   private:
 

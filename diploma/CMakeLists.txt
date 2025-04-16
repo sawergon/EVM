@@ -9,20 +9,41 @@ add_subdirectory(lib/PGpl2)
 add_subdirectory(lib/PP)
 add_subdirectory(lib/F_pl)
 
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
+
 include_directories(include/functions)
 include_directories(include/objects)
+include_directories(include/interfaces)
+include_directories(include/Network)
+include_directories(include/objects/Nodes)
+include_directories(include)
 
 set(SRC src/functions/stribog256.cpp
         include/functions/stribog256.hpp
         include/objects/TrustCenter.hpp
         src/objects/TrustCenter.cpp
+        include/objects/Nodes/Node.hpp
+        include/objects/Nodes/TCNode.hpp
+        src/objects/Nodes/TCNode.cpp
+        src/objects/Nodes/CommonNode.cpp
+        include/objects/Nodes/CommonNode.hpp
 )
 
 add_executable(diploma
         main.cpp
         ${SRC}
 )
-target_link_libraries(diploma)
+target_link_libraries(diploma
+        PRIVATE
+        unital
+        fpld
+        pgpl2
+        pp
+        fpl
+        Boost::system
+        Boost::filesystem
+        Boost::program_options
+)
 
 find_package(GTest REQUIRED)
 include_directories(test)

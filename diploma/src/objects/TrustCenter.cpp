@@ -17,4 +17,8 @@ void TrustCenter::fillUBlocks() {
     uBlocks.emplace_back(unital.getBlockId(i));
   }
 }
-void TrustCenter::fillPPBlocks() {}
+void TrustCenter::fillPPBlocks() {
+  for (long i = 0; i < ppBlocks.size(); ++i) {
+    ppBlocks.emplace_back(ppdn.getBlockId(i));
+  }
+}
