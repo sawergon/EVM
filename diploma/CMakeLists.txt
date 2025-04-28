@@ -16,33 +16,39 @@ include_directories(include/objects)
 include_directories(include/interfaces)
 include_directories(include/Network)
 include_directories(include/objects/Nodes)
+include_directories(include/ConfigParser)
 include_directories(include)
 
-set(SRC src/functions/stribog256.cpp
-        include/functions/stribog256.hpp
-        include/objects/TrustCenter.hpp
-        src/objects/TrustCenter.cpp
-        include/objects/Nodes/Node.hpp
-        include/objects/Nodes/TCNode.hpp
-        src/objects/Nodes/TCNode.cpp
-        src/objects/Nodes/CommonNode.cpp
-        include/objects/Nodes/CommonNode.hpp
+set(SRC
+        include/json.hpp
+        include/ConfigParser/ConfigParser.hpp
+        src/ConfigParser/ConfigParser.cpp
+        include/Model.hpp
+        src/Model.cpp
+
+        include/objects/Node.hpp
+        include/objects/Router.hpp
+        include/objects/Coordinator.hpp
+
+        src/objects/Node.cpp
+        src/objects/Router.cpp
+        src/objects/Coordinator.cpp
 )
 
 add_executable(diploma
-        main.cpp
+        src/main.cpp
         ${SRC}
 )
 target_link_libraries(diploma
         PRIVATE
         unital
-        fpld
+#        fpld
         pgpl2
-        pp
-        fpl
-        Boost::system
-        Boost::filesystem
-        Boost::program_options
+        ppdn
+#        fpl
+#        Boost::system
+#        Boost::filesystem
+#        Boost::program_options
 )
 
 find_package(GTest REQUIRED)

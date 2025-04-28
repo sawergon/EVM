@@ -29,7 +29,7 @@ export class Fpld {
 
     mod_ext = NTL::ZZ_pEXModulus( ext_poly );
 
-    n = NTL::power_long( p, NTL::power_long( l, d ) );
+    n = NTL::power_long(NTL::power_long( p,l),  d );
   }
 
   [[nodiscard]] NTL::ZZ_pEX from_long( long num ) const {
@@ -223,9 +223,7 @@ export class Fpld {
            mod_ext == other.mod_ext && gen == other.gen;
   }
 
-  bool operator!=(const Fpld& other) const {
-    return !(*this == other);
-  }
+  bool operator!=( const Fpld &other ) const { return !( *this == other ); }
 
   private:
   static NTL::ZZ_pX get_fixed_base_poly( long p, long l ) {

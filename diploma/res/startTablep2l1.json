@@ -1,0 +1,21 @@
+{
+  "unital_params": {
+    "p": 2,
+    "l": 1,
+    "d": 2
+  },
+  "data" : [
+    {
+      "idRouter" : 0,
+      "connectWith": [11]
+    },
+    {
+      "idRouter" : 1,
+      "connectWith": [10, 15, 16]
+    },
+    {
+      "idRouter" : 5,
+      "connectWith": [12, 19]
+    }
+  ]
+}

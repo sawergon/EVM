@@ -14,6 +14,8 @@ target_sources(unital
         FILES src/Unital.ixx
 )
 
+target_link_libraries(unital pgpl2)
+
 find_package(GTest REQUIRED)
 
 add_executable(test_unital test/test.cpp test/test_unital.cpp)
