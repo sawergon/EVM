@@ -2,6 +2,11 @@
 #include "Model.hpp"
 #include <fstream>
 #include <iostream>
+#include "Kuznechik/Kuznechik.hpp"
+
+#include <random>
+#include <vector>
+#include <cstdint>
 
 void printMenu() {
   std::cout << "1. send msg" << std::endl;
@@ -68,10 +73,20 @@ int main( int argc, char *argv[] ) {
   model::coordinator::uniParams uni_params = { config["unital_params"]["p"],
                                                config["unital_params"]["l"],
                                                config["unital_params"]["d"] };
-
+  std::cout << "Is encryption? y/n" << std::endl;
+  std::cout << "$> ";
+  bool encrypt = false;
+  char key;
+  while ( !( std::cin >> key ) ) {
+    std::cout << "Incorrect input. Please enter y/n:" << std::endl;
+    std::cout << "$> ";
+    std::cin.clear();
+    std::cin.ignore( std::numeric_limits<std::streamsize>::max(), '\n' );
+  }
+  encrypt = key == 'y';
   model::Model model(
       uni_params, result,
-      []( const std::string &msg ) { std::cout << msg << std::endl; }, false );
+      []( const std::string &msg ) { std::cout << msg << std::endl; }, encrypt );
 
   startMenu(model);
   return 0;

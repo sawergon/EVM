@@ -8,59 +8,173 @@
 
 namespace model::router {
   Router::Router( t_RouterId routerId, const std::list<size_t> &nodes,
-                  const t_RetNodesCallback &callback,
-                  const node::t_Logger     &logger ) {
+                  const t_RetNodesCallback              &callback,
+                  const node::t_Logger                  &logger,
+                  const std::shared_ptr<unital::Unital> &uni, bool isEncrypt ) {
+    m_uni    = uni;
     m_id     = routerId;
     m_logger = logger;
+    encrypt  = isEncrypt;
     for ( const auto &node : nodes ) {
-      m_nodes.insert(
-          { node, std::make_shared<node::Node>(
-                      m_id, node,
-                      [this]( const std::string &msg ) { recvMessage( msg ); },
-                      m_logger ) } );
+      std::shared_ptr<node::Node> nodePtr;
+      if ( encrypt ) {
+        nodePtr = createEncryptNode( node );
+      } else {
+        nodePtr = std::make_shared<node::Node>(
+            m_id, node,
+            [this]( const std::string &msg ) { recvMessage( msg ); },
+            m_logger );
+      }
+      m_nodes.insert( { node, nodePtr } );
     }
     callback( m_nodes );
   }
 
-  std::pair<long, std::string> parseMsg(const std::string& msg) {
-    long number;
+  std::pair<long, std::string> parseMsg( const std::string &msg ) {
+    long        number;
     std::string message;
 
     // Создаем поток для разбора строки
-    std::istringstream iss(msg);
+    std::istringstream iss( msg );
 
     // Извлекаем число до запятой
-    char delimiter; // Для хранения символа-разделителя
-    if (iss >> number >> delimiter) {
+    char delimiter;  // Для хранения символа-разделителя
+    if ( iss >> number >> delimiter ) {
       // Проверяем, что следующий символ - это запятая
-      if (delimiter == ',') {
+      if ( delimiter == ',' ) {
         // Извлекаем оставшуюся часть строки
         std::string temp;
-        std::getline(iss, temp); // Читаем до конца строки
+        std::getline( iss, temp );  // Читаем до конца строки
 
         // Удаляем фигурные скобки
-        if (!temp.empty() && temp.front() == '{') {
-          temp.erase(0, 1); // Удаляем открывающую фигурную скобку
+        if ( !temp.empty() && temp.front() == '{' ) {
+          temp.erase( 0, 1 );  // Удаляем открывающую фигурную скобку
         }
-        if (!temp.empty() && temp.back() == '}') {
-          temp.erase(temp.size() - 1); // Удаляем закрывающую фигурную скобку
+        if ( !temp.empty() && temp.back() == '}' ) {
+          temp.erase( temp.size() - 1 );  // Удаляем закрывающую фигурную скобку
         }
-        message = temp; // Присваиваем результат переменной msg
+        message = temp;  // Присваиваем результат переменной msg
       }
     }
-    return {number, message};
+    return { number, message };
+  }
+  struct recvEnc {
+    long        from;
+    long        to;
+    long        keyId;
+    std::string msg;
+    bool        success = false;
+  };
+  recvEnc parseMsgEnc( const std::string &msg ) {
+    recvEnc res{};
+
+    // Создаем поток для разбора строки
+    std::istringstream iss( msg );
+
+    // Извлекаем число до запятой
+    char delimiter;  // Для хранения символа-разделителя
+    if ( iss >> res.from >> delimiter ) {
+      // Проверяем, что следующий символ - это запятая
+      if ( delimiter != ',' )
+        return { 0, 0, 0, {}, false };
+      if ( iss >> res.to >> delimiter ) {
+        // Проверяем, что следующий символ - это запятая
+        if ( delimiter != ',' )
+          return { 0, 0, 0, {}, false };
+        if ( iss >> res.keyId >> delimiter ) {
+          // Проверяем, что следующий символ - это запятая
+          if ( delimiter != ',' )
+            return { 0, 0, 0, {}, false };
+
+          // Извлекаем оставшуюся часть строки
+          std::string temp;
+          std::getline( iss, temp );  // Читаем до конца строки
+
+          // Удаляем фигурные скобки
+          if ( !temp.empty() && temp.front() == '{' ) {
+            temp.erase( 0, 1 );  // Удаляем открывающую фигурную скобку
+          }
+          if ( !temp.empty() && temp.back() == '}' ) {
+            temp.erase( temp.size() -
+                        1 );  // Удаляем закрывающую фигурную скобку
+          }
+          res.msg = temp;  // Присваиваем результат переменной msg
+        }
+      }
+    }
+    res.success = true;
+    return res;
   }
 
-  void Router::recvMessage( const std::string &msg ) const {
+
+  void Router::recvMessage( const std::string &msg ) {
     m_logger( "[Router " + std::to_string( m_id ) +
               "] received message: " + msg );
-    auto [to, message] = parseMsg(msg);
-    if (!m_hopTable->contains(to)) {
-      m_logger("[Router " + std::to_string( m_id ) +
-                "]" + std::to_string(to) + " is not realized in network");
+
+
+    if ( !encrypt ) {
+      auto [to, message] = parseMsg( msg );
+      if ( !m_hopTable->contains( to ) ) {
+        m_logger( "[Router " + std::to_string( m_id ) + "]" +
+                  std::to_string( to ) + " is not realized in network" );
+        return;
+      }
+      m_hopTable->at( to ).publish( std::to_string( to ) + ",{" + message + '}' );
     } else {
-      m_hopTable->at( to )( std::to_string( to ) + ",{" + message + '}' );
+      auto [from, to, keyId, message, success] = parseMsgEnc( msg );
+      if ( !success ) {
+        m_logger( "[Router " + std::to_string( m_id ) + "]" +
+                  "recv incorrect msg" );
+        return;
+      }
+      if ( !m_hopTable->contains( to ) ) {
+        m_logger( "[Router " + std::to_string( m_id ) + "]" +
+                  std::to_string( to ) + " is not realized in network" );
+        return;
+      }
+
+      std::string recvMsg{};
+
+      if ( m_key_pool.contains( keyId ) ) {
+        recvMsg = m_key_pool[keyId]->decrypt( std::vector<uint8_t>(message.begin(), message.end()) );
+      } else if ( m_pp_key_pool.contains( keyId ) ) {
+        recvMsg = m_pp_key_pool[keyId]->decrypt( std::vector<uint8_t>(message.begin(), message.end()) );
+      }
+
+      auto encKey = m_hopTable->at(to).encKeyId;
+      std::vector<uint8_t> a;
+      if ( m_key_pool.contains( encKey ) ) {
+        a = m_key_pool[keyId]->encrypt( recvMsg );
+
+      } else if ( m_pp_key_pool.contains( encKey ) ) {
+        a = m_pp_key_pool[keyId]->encrypt( recvMsg );
+      }
+
+      std::string encMsg{a.begin(), a.end()};
+
+      std ::string pMsg =
+          std::to_string( from ) + ", " + std::to_string( to ) + "," + std::to_string(encKey) + ",{";
+      m_hopTable->at( to ).publish( std::to_string( to ) + ",{" + encMsg + '}' );
     }
+  }
+  node::t_NodePtr Router::createEncryptNode( node::t_NodeId node ) {
+    auto routerBlock = m_uni->getBlockId( m_id );
+    auto nodeBlock   = m_uni->getBlockId( node );
+
+    kuznechik::t_KeyId keyId = routerBlock.intersection( nodeBlock ).to_int();
+
+    auto key = kuznechik::generate_random_key();
+
+    m_key_pool[keyId]    = std::make_shared<kuznechik::KuznechikCipher>( key );
+    node::t_KeyInfo info = { keyId, key };
+
+    return std::make_shared<node::Node>(
+        m_id, node, [this]( const std::string &msg ) { recvMessage( msg ); },
+        m_logger, true, info );
+  }
+  void Router::addPreKey( const node::t_KeyInfo &keyInfo ) {
+    m_pp_key_pool[keyInfo.id] =
+        std::make_shared<kuznechik::KuznechikCipher>( keyInfo.key );
   }
 
 }  // namespace model::router

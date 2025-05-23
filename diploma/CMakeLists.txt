@@ -17,6 +17,7 @@ include_directories(include/interfaces)
 include_directories(include/Network)
 include_directories(include/objects/Nodes)
 include_directories(include/ConfigParser)
+include_directories(include/Kuznechik)
 include_directories(include)
 
 set(SRC
@@ -33,6 +34,9 @@ set(SRC
         src/objects/Node.cpp
         src/objects/Router.cpp
         src/objects/Coordinator.cpp
+
+        include/Kuznechik/Kuznechik.hpp
+        src/Kuznechick/Kuznechick.cpp
 )
 
 add_executable(diploma
@@ -62,6 +66,13 @@ add_executable(test
         ${SRC_TEST}
         ${SRC}
 )
+
+add_executable(test_kuz
+        test_kuz.cpp
+        include/Kuznechik/Kuznechik.hpp
+        src/Kuznechick/Kuznechick.cpp
+)
+
 target_link_libraries(test PRIVATE GTest::Main)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

@@ -3,11 +3,14 @@
 namespace model::coordinator {
 
   Coordinator::Coordinator( const uniParams &params, const t_TablePtr &table,
-                            const node::t_Logger &logger ) {
+                            const node::t_Logger                  &logger,
+                            const std::shared_ptr<unital::Unital> &unital,
+                            bool                                   isEncrypt ) {
     table_  = table;
     logger_ = logger;
     params_ = params;
-    uni     = std::make_shared<unital::Unital>( params_.p, params_.l );
+    uni     = unital;
+    encrypt = isEncrypt;
   }
 
   std::pair<long, long> gotPL( long n ) {
@@ -22,16 +25,35 @@ namespace model::coordinator {
 
   void Coordinator::setRoutes( router::t_RouterTable &routers,
                                node::t_NodeTable     &nodes ) {
+    auto [p, l] = gotPL( uni->getN() );
+    if (p == 1 && l == 1) {
+      p++;
+    }
+    ppdn::PPdn pp( static_cast<long>(params_.d), p, l );
+
+    auto pp_uni = fiilUni2PPtable();
     /// для каждого блока параллельнгого класса составляем таблицу маршрутов
     for ( auto &[id_i, router] : routers ) {
       router::t_RoutesTable routes = std::make_shared<
-          std::unordered_map<size_t, router::t_PublishMessage>>();
+          std::unordered_map<size_t, router::routeStruct>>();
       auto tcBlockId = uni->getBlockId( id_i );
       /// Проективная геометрия для роутеров
+      auto tc_pp_id = pp.getBlockId( id_i );
       for ( auto &[id_j, router_j] : routers ) {
-        routes->insert( { id_j, [&]( const std::string &msg ) {
-                           router_j->recvMessage( msg );
-                         } } );
+        size_t key_id = 0;
+
+        if ( encrypt ) {
+          auto               other_pp_id = pp.getBlockId( id_j );
+          key_id =
+              tc_pp_id.intersect( other_pp_id ).to_int();
+          kuznechik::t_Key key  = kuznechik::generate_random_key();
+          node::t_KeyInfo  info = { key_id, key };
+          router->addPreKey( info );
+          router_j->addPreKey( info );
+        }
+        routes->insert( { id_j, {key_id, [&]( const std::string &msg ) {
+                                   router_j->recvMessage( msg );
+                                 } } } );
       }
 
       /// для каждого реализованного узла в сети
@@ -41,9 +63,9 @@ namespace model::coordinator {
         if ( router->isAchived( id ) &&
              tcBlockId.intersection( targetBlockId ).isValid() ) {
           /// добавляем маршрут в таблицу
-          routes->insert( { id, [&]( const std::string &msg ) {
-                             ptr->recvMessage( msg );
-                           } } );
+          routes->insert( { id, {0, [&]( const std::string &msg ) {
+                              ptr->recvMessage( msg );
+                            } } } );
         } else {
 
           auto elseTcBlockId = uni->getBlockId( ptr->getRouter() );
@@ -51,9 +73,9 @@ namespace model::coordinator {
           /// параллеьльного класса
           if ( routers[ptr->getRouter()]->isAchived( id ) &&
                elseTcBlockId.intersection( targetBlockId ).isValid() ) {
-            routes->insert( { id, [&]( const std::string &msg ) {
-                               routers[ptr->getRouter()]->recvMessage( msg );
-                             } } );
+            routes->insert( { id, {0, [&]( const std::string &msg ) {
+                                routers[ptr->getRouter()]->recvMessage( msg );
+                              } } } );
           }
         }
       }
@@ -62,13 +84,14 @@ namespace model::coordinator {
     }
   }
 
-  std::unordered_map<long, long> Coordinator::fiilUni2PPtable(
-      unital::Unital &uni ) {
+  std::unordered_map<long, long> Coordinator::fiilUni2PPtable() {
     std::unordered_map<long, long> res{};
 
-    auto tcSize = uni.getS();
+    auto tcSize = uni->getS();
     for ( auto i = 0; i < tcSize; ++i ) {
-      res[uni.getBlockId( i ).to_int()] = i;
+      auto uni_id = uni->getBlockId( i ).to_int();
+      res[uni_id] = i;
+      i           = uni_id;
     }
     return res;
   }

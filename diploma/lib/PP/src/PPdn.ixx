@@ -10,6 +10,8 @@ import Fpl;
 
 namespace ppdn {
 
+  export class PPDualBlockId;
+
   export class PPBlockId {
 public:
     PPBlockId( Fpl *f = nullptr )
@@ -103,6 +105,8 @@ public:
 
     Fpl *getField() { return field; }
 
+    PPDualBlockId intersect( PPBlockId &other );
+
 private:
     Fpl       *field;
     NTL::ZZ_pE a, b, c;
@@ -190,10 +194,89 @@ public:
 
     Fpl *getField() { return field; }
 
+    PPBlockId intersect( PPDualBlockId &other );
+
 private:
     Fpl       *field;
     NTL::ZZ_pE x, y, z;
   };
+
+  PPBlockId PPDualBlockId::intersect( PPDualBlockId &other ) {
+    auto zero = NTL::ZZ_pE( 0 );
+    auto one  = NTL::ZZ_pE( 1 );
+
+    if ( z == other.z == zero && ( y == one || other.y == one ) )
+      return PPBlockId( field, zero, zero, one );
+
+    if ( y == z == zero && other.z == one )
+      return PPBlockId( field, zero, one, field->sub( zero, other.y ) );
+
+    if ( other.y == other.z == zero && z == one )
+      return PPBlockId( field, one, field->sub( zero, y ), zero );
+
+    if ( y == other.y == one && other.z == z == zero )
+      return PPBlockId( field, zero, zero, one );
+
+    if ( z == other.y == one && other.z == zero )
+      return PPBlockId( field, one, field->sub( zero, other.x ),
+                        field->sub( field->mul( other.x, y ), x ) );
+
+    if ( other.z == y == one && z == zero )
+      return PPBlockId( field, one, field->sub( zero, x ),
+                        field->sub( field->mul( x, other.y ), other.x ) );
+
+    if ( z == other.z == one && y == other.y )
+      return PPBlockId( field, zero, one, field->sub( zero, y ) );
+    auto b = field->mul( field->sub( x, other.x ),
+                         field->inv( field->sub( other.y, y ) ) );
+    return PPBlockId( field, one, b,
+                      field->sub( zero, field->add( x, field->mul( b, y ) ) ) );
+  }
+
+  PPDualBlockId PPBlockId::intersect( PPBlockId &other ) {
+    auto zero = NTL::ZZ_pE( 0 );
+    auto one  = NTL::ZZ_pE( 1 );
+
+    if ( a == zero && other.a == zero && ( other.b == one || b == one ) )
+      return PPDualBlockId( field, one, zero, zero );
+
+    if ( other.a == one && b == a == zero ) {
+      auto val = field->sub( zero, other.b );
+      return PPDualBlockId{ field, val, one, zero };
+    }
+
+    if ( other.b == other.a == zero && a == one ) {
+      auto val = field->sub( zero, b );
+      return PPDualBlockId{ field, val, one, zero };
+    }
+
+    if ( a == other.a == zero && b == other.b == one )
+      return PPDualBlockId{ field, one, zero, zero };
+
+    if ( a == other.b == one && other.a == zero ) {
+      auto num = field->sub( field->mul( other.c, b ), c );
+      auto y   = field->sub( zero, other.c );
+      return PPDualBlockId{ field, num, y, one };
+    }
+
+    if ( b == other.a == one && a == zero ) {
+      auto num = field->sub( field->mul( c, other.b ), other.c );
+      auto y   = field->sub( zero, c );
+      return PPDualBlockId{ field, num, y, one };
+    }
+
+    if ( a == other.a == one && b == other.b ) {
+      auto val = field->sub( zero, b );
+      return PPDualBlockId{ field, val, one, zero };
+    }
+
+    auto numerator   = field->sub( c, other.c );
+    auto denominator = field->sub( other.b, b );
+    auto y           = field->mul( numerator, field->inv( denominator ) );
+    auto x           = field->sub( zero, field->add( c, field->mul( y, c ) ) );
+
+    return PPDualBlockId{ field, x, y, one };
+  }
 
   export class PPBlock {
 public:
