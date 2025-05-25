@@ -88,8 +88,8 @@ namespace model::router {
                          const std::string &msg ) {
     /// проверяем на совместимость сообещения и ключа с помощью хэш функции
     auto        key = m_key_pool[{ to, KeyType::Uni }]->getKey();
-    std::string myPart =
-        "";//stribog256( std::to_string( from ) + convertToString( key ) );
+    Streebog512 hasher{};
+    std::string myPart = hasher.hash( std::to_string( from ) + convertToString( key ) );
     if ( myPart != msg ) {
       m_logger( "[Router " + std::to_string( m_id ) + "]" +
                 "invalid key request. Hash doesn't match" );

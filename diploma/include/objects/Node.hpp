@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include "Stribog512.hpp"
 
 namespace model::node {
 

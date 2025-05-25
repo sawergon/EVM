@@ -38,18 +38,20 @@ public:
 
     void setHopTable( const t_RoutesTable &hopTable ) {
       m_hopTable = hopTable;
-      std::cout << "[Router " << m_id << "] Set hop table" << std::endl;
-      for ( const auto &item : *m_hopTable ) {
-        kuznechik::t_Key key =
-            m_key_pool[{ item.second.encKeyId, item.second.keyType }]->getKey();
+      if (encrypt) {
+        std::cout << "[Router " << m_id << "] Set hop table" << std::endl;
+        for ( const auto &item : *m_hopTable ) {
+          kuznechik::t_Key key =
+              m_key_pool[{ item.second.encKeyId, item.second.keyType }]->getKey();
 
-        std::string keyStr =
-            std::string( reinterpret_cast<char *>( key.data() ),
-                         reinterpret_cast<char *>( key.data() ) + key.size() );
-        std::cout << "[Router " << m_id << "] " << item.first << " -> "
-                  << item.second.encKeyId
-                  << charFromKeyType( item.second.keyType )
-                  << " Key: " << keyStr << std::endl;
+          std::string keyStr =
+              std::string( reinterpret_cast<char *>( key.data() ),
+                           reinterpret_cast<char *>( key.data() ) + key.size() );
+          std::cout << "[Router " << m_id << "] " << item.first << " -> "
+                    << item.second.encKeyId
+                    << charFromKeyType( item.second.keyType )
+                    << " Key: " << keyStr << std::endl;
+        }
       }
     }
 
