@@ -14,14 +14,14 @@ namespace network {
     std::string address;
     uint16_t    port;
     bool        operator==( const Endpoint &other ) const {
-      return address == other.address && port == other.port;
+             return address == other.address && port == other.port;
     }
 
     bool operator!=( const Endpoint &other ) const {
       return !( *this == other );
     }
 
-    operator std::vector<uint8_t> () const {
+    operator std::vector<uint8_t>() const {
       std::vector<uint8_t> result;
       result.push_back( port & 0xFF );
       result.push_back( port >> 8 );
@@ -31,11 +31,10 @@ namespace network {
 
     static Endpoint fromVector( const std::vector<uint8_t> &vec ) {
       Endpoint result;
-      result.port = vec[0] + (vec[1] << 8);
+      result.port = vec[0] + ( vec[1] << 8 );
       result.address.assign( vec.begin() + 2, vec.end() );
       return result;
     }
-
   };
 
   // Тип коллбэка, вызываемого при получении сообщения

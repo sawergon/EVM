@@ -6,11 +6,12 @@
 #define DIPLOMA_INCLUDE_OBJECTS_NODE_HPP_
 
 #include "Kuznechik.hpp"
+#include "parser.hpp"
+#include "stribog256.hpp"
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <utility>
-#include "parser.hpp"
 
 namespace model::node {
 
@@ -22,7 +23,7 @@ namespace model::node {
 
   struct t_KeyInfo {
     kuznechik::t_KeyId id;
-    kuznechik::t_Key key;
+    kuznechik::t_Key   key;
   };
 
 
@@ -41,7 +42,7 @@ public:
     [[nodiscard]] t_NodeId getRouter() const { return linkedRouter; }
 
 private:
-    void initBlomeScheme();
+    void     initBlomeScheme();
     t_Logger m_logger{};
     t_NodeId id{};
     size_t   linkedRouter{};
@@ -50,8 +51,8 @@ private:
 
     t_PublishFnc publish{ nullptr };
 
-    kuznechik::t_Key m_key{};
-    kuznechik::t_KeyId m_keyId{};
+    kuznechik::t_Key                            m_key{};
+    kuznechik::t_KeyId                          m_keyId{};
     std::shared_ptr<kuznechik::KuznechikCipher> cipher{ nullptr };
   };
 

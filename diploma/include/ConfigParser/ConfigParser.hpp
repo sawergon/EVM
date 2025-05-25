@@ -6,15 +6,15 @@
 #define DIPLOMA_INCLUDE_CONFIGPARSER_CONFIGPARSER_HPP_
 
 #include "../json.hpp"
-#include <unordered_map>
 #include <list>
 #include <memory>
+#include <unordered_map>
 
-using t_Table = std::unordered_map<size_t, std::list<size_t>>;
+using t_Table    = std::unordered_map<size_t, std::list<size_t>>;
 using t_TablePtr = std::shared_ptr<t_Table>;
 
 namespace parser {
-  t_TablePtr parse(const nlohmann::json& json);
+  t_TablePtr parse( const nlohmann::json &json );
 
 }
 

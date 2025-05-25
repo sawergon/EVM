@@ -45,8 +45,8 @@ namespace network {
   };
 
   struct Server2NodeHelloAnswer {
-    uint64_t id;  /// идентификатор блока
-    uint64_t routerId; /// идентификатор роутера
+    uint64_t id;        /// идентификатор блока
+    uint64_t routerId;  /// идентификатор роутера
   };
 }  // namespace network
 

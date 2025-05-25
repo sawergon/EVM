@@ -1,13 +1,13 @@
 #include "Model.hpp"
 
 namespace model {
-
   Model::Model( const coordinator::uniParams &params, const t_TablePtr &table,
-                const node::t_Logger &logger, bool isEncrypt ) {
+                const node::t_Logger &logger, bool isEncrypt,
+                const blome::SchemeParams &blomeParams ) {
     m_uni         = std::make_shared<unital::Unital>( params.p, params.l );
     m_logger      = logger;
-    m_coordinator = std::make_shared<coordinator::Coordinator>( params, table,
-                                                                logger, m_uni, isEncrypt );
+    m_coordinator = std::make_shared<coordinator::Coordinator>(
+        params, table, logger, m_uni, isEncrypt );
     for ( const auto &[routerId, nodeList] : *table ) {
       m_routers.insert(
           { routerId,
@@ -84,5 +84,4 @@ namespace model {
     }
   }
   void Model::setStartTable( const t_TablePtr &table ) {}
-
 }  // namespace model

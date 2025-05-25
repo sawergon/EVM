@@ -1,12 +1,14 @@
 #include "ConfigParser.hpp"
+#include "Kuznechik/Kuznechik.hpp"
 #include "Model.hpp"
 #include <fstream>
 #include <iostream>
-#include "Kuznechik/Kuznechik.hpp"
 
+#include <cstdint>
 #include <random>
 #include <vector>
-#include <cstdint>
+
+#include "BlomePolinome.hpp"
 
 void printMenu() {
   std::cout << "1. send msg" << std::endl;
@@ -45,10 +47,9 @@ void startMenu( model::Model &model ) {
       std::getline( std::cin, msg );
       std::getline( std::cin, msg );
       model.send( from, to, msg );
-    }
-    else if ( command == "2" ) {
+    } else if ( command == "2" ) {
       model.printNetwork();
-    } else if (command == "q" || command == "exit") {
+    } else if ( command == "q" || command == "exit" ) {
       std::cout << "Bye" << std::endl;
       break;
     } else {
@@ -73,6 +74,10 @@ int main( int argc, char *argv[] ) {
   model::coordinator::uniParams uni_params = { config["unital_params"]["p"],
                                                config["unital_params"]["l"],
                                                config["unital_params"]["d"] };
+
+  blome::SchemeParams blomeParams = { NTL::ZZ( config["blome_scheme"]["p"] ),
+                                      config["blome_scheme"]["m"] };
+
   std::cout << "Is encryption? y/n" << std::endl;
   std::cout << "$> ";
   bool encrypt = false;
@@ -86,8 +91,9 @@ int main( int argc, char *argv[] ) {
   encrypt = key == 'y';
   model::Model model(
       uni_params, result,
-      []( const std::string &msg ) { std::cout << msg << std::endl; }, encrypt );
+      []( const std::string &msg ) { std::cout << msg << std::endl; },
+      encrypt );
 
-  startMenu(model);
+  startMenu( model );
   return 0;
 }

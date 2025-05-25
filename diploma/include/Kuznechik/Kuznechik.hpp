@@ -69,11 +69,10 @@ private:
     static constexpr uint8_t L_VEC[16] = { 0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0,
                                            0x01, 0xFB, 0x01, 0xC0, 0xC2, 0x10,
                                            0x85, 0x20, 0x94, 0x01 };
-      t_Key key;
+    t_Key                    key;
+
 public:
-      t_Key getKey() const {
-        return key;
-      }
+    t_Key                             getKey() const { return key; }
     std::vector<std::vector<uint8_t>> round_keys;
 
     // Умножение в поле Галуа GF(2^8)
@@ -108,13 +107,13 @@ public:
       return a;
     }
 
-    static uint8_t* R_inv_transform( uint8_t *a ) {
+    static uint8_t *R_inv_transform( uint8_t *a ) {
       uint8_t a0 = a[0];
-      for (int i = 0; i < 15; ++i) {
+      for ( int i = 0; i < 15; ++i ) {
         a[i] = a[i + 1];
       }
       a[15] = a0;
-      a[15] = l_transform(a);
+      a[15] = l_transform( a );
       return a;
     }
 
@@ -127,7 +126,7 @@ public:
     }
 
     // Обратное линейное преобразование L⁻¹
-    static uint8_t* L_inv_transform( uint8_t *state ) {
+    static uint8_t *L_inv_transform( uint8_t *state ) {
       for ( int i = 0; i < 16; ++i ) {
         R_inv_transform( state );
       }
@@ -211,10 +210,11 @@ public:
 
     // Дешифрование блока
     void decrypt_block( uint8_t *block ) {
-      for (int r = 9; r > 0; --r) {
-        S_inv_transform(L_inv_transform(X_transform(round_keys[r].data(), block)));
+      for ( int r = 9; r > 0; --r ) {
+        S_inv_transform(
+            L_inv_transform( X_transform( round_keys[r].data(), block ) ) );
       }
-      X_transform(round_keys[0].data(), block);
+      X_transform( round_keys[0].data(), block );
     }
 
     // Удаление паддинга

@@ -17,5 +17,9 @@
       "idRouter" : 5,
       "connectWith": [12, 19]
     }
-  ]
+  ],
+  "blome_scheme": {
+    "p" : 2,
+    "m" : 256
+  }
 }

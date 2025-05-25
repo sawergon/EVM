@@ -5,6 +5,7 @@
 #ifndef DIPLOMA_INCLUDE_MODEL_HPP_
 #define DIPLOMA_INCLUDE_MODEL_HPP_
 
+#include "BlomePolinome.hpp"
 #include "ConfigParser.hpp"
 #include "Coordinator.hpp"
 #include "Router.hpp"
@@ -17,7 +18,7 @@ namespace model {
   class Model {
 public:
     Model( const coordinator::uniParams &params, const t_TablePtr &table,
-           const node::t_Logger &logger, bool isEncrypt = false );
+           const node::t_Logger &logger, bool isEncrypt = false, const blome::SchemeParams& blomeParams = {} );
     void setStartTable( const t_TablePtr &table );
 
     void send( size_t from, size_t to, const std::string &msg );
