@@ -53,7 +53,8 @@ namespace model::node {
   void Node::initBlomeScheme() {
 
     std::string keyRequest = std::to_string( id ) + "," +
-                              std::to_string(m_keyId) + ",{" + stribog256(std::to_string( id ) + convertToString(m_key)) + "}";
+                              std::to_string(m_keyId) + ",{";// + stribog256(std::to_string( id ) + convertToString(m_key)) + "}";
     m_logger( "[Node " + std::to_string( id ) + "] publish key request: " + keyRequest );
+    publish( keyRequest );
   }
 }  // namespace model::node

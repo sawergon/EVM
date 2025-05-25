@@ -15,7 +15,7 @@ namespace model {
                 routerId, nodeList,
                 [this]( const std::unordered_map<node::t_NodeId, node::t_NodePtr>
                             &table ) { mergeNodeTable( table ); },
-                m_logger, m_uni, isEncrypt ) } );
+                m_logger, m_uni, isEncrypt, blomeParams ) } );
     }
 
     std::list<size_t> nodes;
@@ -35,7 +35,7 @@ namespace model {
                                                      node::t_NodePtr> &table ) {
                       mergeNodeTable( table );
                     },
-                    m_logger, m_uni, encrypted ) } );
+                    m_logger, m_uni, encrypted, blomeParams ) } );
         }
       }
     }

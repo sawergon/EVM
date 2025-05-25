@@ -7,7 +7,7 @@
 
 #include "Kuznechik.hpp"
 #include "parser.hpp"
-#include "stribog256.hpp"
+// #include "stribog256.hpp"
 #include <functional>
 #include <iostream>
 #include <memory>

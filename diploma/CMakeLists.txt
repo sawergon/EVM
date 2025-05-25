@@ -42,10 +42,12 @@ set(SRC
         src/functions/parser.cpp
         include/functions/parser.hpp
 
-        src/functions/stribog256.cpp
-        include/functions/stribog256.hpp
+#        src/functions/stribog256.cpp
+#        include/functions/stribog256.hpp
         include/blome/BlomePolinome.hpp
         src/blome/BlomePolinome.cpp
+        include/functions/Stribog512.hpp
+        src/functions/Stribog512.cpp
 )
 
 add_executable(diploma
@@ -82,7 +84,13 @@ add_executable(test_kuz
         src/Kuznechick/Kuznechick.cpp
 )
 
-target_link_libraries(test PRIVATE GTest::Main)
+target_link_libraries(test
+        PRIVATE
+        GTest::Main
+        unital
+        pgpl2
+        ppdn
+)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 #add_custom_command(TARGET diploma POST_BUILD

@@ -82,6 +82,8 @@ private:
 
     node::t_NodePtr createEncryptNode( node::t_NodeId node );
 
+    void genPolinome( const std::list<size_t> &nodes );
+
     node::t_Logger                                      m_logger{};
     t_RoutesTable                                       m_hopTable{};
     t_RouterId                                          m_id{};
@@ -99,6 +101,8 @@ private:
     std::shared_ptr<unital::Unital> m_uni{ nullptr };
 
     blome::SchemeParams blomeParams{};
+
+    std::unordered_map<node::t_NodeId, std::shared_ptr<blome::BlomPolynomial>> polinomes{};
   };
 
   using t_RouterPtr = std::shared_ptr<Router>;

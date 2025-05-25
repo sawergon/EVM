@@ -75,8 +75,10 @@ int main( int argc, char *argv[] ) {
                                                config["unital_params"]["l"],
                                                config["unital_params"]["d"] };
 
-  blome::SchemeParams blomeParams = { NTL::ZZ( config["blome_scheme"]["p"] ),
-                                      config["blome_scheme"]["m"] };
+  blome::SchemeParams blomeParams{};
+
+  blomeParams.p = NTL::ZZ( config["blome_scheme"]["p"] );
+  blomeParams.m = config["blome_scheme"]["m"];
 
   std::cout << "Is encryption? y/n" << std::endl;
   std::cout << "$> ";
@@ -92,7 +94,7 @@ int main( int argc, char *argv[] ) {
   model::Model model(
       uni_params, result,
       []( const std::string &msg ) { std::cout << msg << std::endl; },
-      encrypt );
+      encrypt, blomeParams );
 
   startMenu( model );
   return 0;

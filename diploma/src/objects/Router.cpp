@@ -17,6 +17,9 @@ namespace model::router {
     m_id     = routerId;
     m_logger = logger;
     encrypt  = isEncrypt;
+
+    genPolinome( nodes );
+
     for ( const auto &node : nodes ) {
       std::shared_ptr<node::Node> nodePtr;
       if ( encrypt ) {
@@ -29,6 +32,7 @@ namespace model::router {
       }
       m_nodes.insert( { node, nodePtr } );
     }
+
     callback( m_nodes );
   }
 
@@ -67,6 +71,7 @@ namespace model::router {
                 "recv incorrect msg" );
       return false;
     }
+    if (m_hopTable == nullptr) return false;
     if ( !m_hopTable->contains( to ) ) {
       m_logger( "[Router " + std::to_string( m_id ) + "]" +
                 std::to_string( to ) + " is not realized in network" );
@@ -84,12 +89,16 @@ namespace model::router {
     /// проверяем на совместимость сообещения и ключа с помощью хэш функции
     auto        key = m_key_pool[{ to, KeyType::Uni }]->getKey();
     std::string myPart =
-        stribog256( std::to_string( to ) + convertToString( key ) );
+        "";//stribog256( std::to_string( from ) + convertToString( key ) );
     if ( myPart != msg ) {
       m_logger( "[Router " + std::to_string( m_id ) + "]" +
                 "invalid key request. Hash doesn't match" );
       return;
     }
+
+    auto preKey = polinomes[from]->generate_32byte_key( from, m_id );
+
+
   }
 
   bool Router::decryptRecvMsg( const std::pair<node::t_NodeId, KeyType> &fromTo,
@@ -188,6 +197,14 @@ namespace model::router {
         m_id, node, [this]( const std::string &msg ) { recvMessage( msg ); },
         m_logger, true, info );
   }
+
+  void Router::genPolinome( const std::list<size_t> &nodes ) {
+    for ( auto &node : nodes ) {
+      polinomes[node] = std::make_shared<blome::BlomPolynomial>(
+          blomeParams.m, blomeParams.p );
+    }
+  }
+
   void Router::addPpPreKey( const node::t_KeyInfo &keyInfo ) {
     m_key_pool[{ keyInfo.id, KeyType::PP }] =
         std::make_shared<kuznechik::KuznechikCipher>( keyInfo.key );

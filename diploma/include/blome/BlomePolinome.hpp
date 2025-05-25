@@ -8,6 +8,7 @@
 #include <NTL/ZZ.h>
 #include <NTL/ZZ_p.h>
 #include <NTL/mat_ZZ_p.h>
+#include <vector>
 
 namespace blome {
   struct SchemeParams {
@@ -29,6 +30,13 @@ public:
 
     // Получение предварительного ключа для узла с ID = x
     NTL::ZZ_p get_node_key( const NTL::ZZ_p &x );
+
+    // Генерация 32-байтового ключа для узла с ID = x
+    std::vector<uint8_t> generate_32byte_key( const NTL::ZZ_p &x,
+                                              const NTL::ZZ_p &y );
+
+    std::vector<uint8_t> generate_32byte_key( const size_t &x,
+                                              const size_t &y );
 
     void print() const;
   };
