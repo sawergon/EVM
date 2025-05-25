@@ -19,6 +19,7 @@ include_directories(include/objects/Nodes)
 include_directories(include/ConfigParser)
 include_directories(include/Kuznechik)
 include_directories(include)
+include_directories(include/blome)
 
 set(SRC
         include/json.hpp
@@ -37,6 +38,14 @@ set(SRC
 
         include/Kuznechik/Kuznechik.hpp
         src/Kuznechick/Kuznechick.cpp
+
+        src/functions/parser.cpp
+        include/functions/parser.hpp
+
+        src/functions/stribog256.cpp
+        include/functions/stribog256.hpp
+        include/blome/BlomePolinome.hpp
+        src/blome/BlomePolinome.cpp
 )
 
 add_executable(diploma

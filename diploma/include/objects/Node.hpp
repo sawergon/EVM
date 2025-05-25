@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include "parser.hpp"
 
 namespace model::node {
 

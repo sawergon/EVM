@@ -69,7 +69,11 @@ private:
     static constexpr uint8_t L_VEC[16] = { 0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0,
                                            0x01, 0xFB, 0x01, 0xC0, 0xC2, 0x10,
                                            0x85, 0x20, 0x94, 0x01 };
+      t_Key key;
 public:
+      t_Key getKey() const {
+        return key;
+      }
     std::vector<std::vector<uint8_t>> round_keys;
 
     // Умножение в поле Галуа GF(2^8)
@@ -238,6 +242,7 @@ public:
     KuznechikCipher( const std::vector<uint8_t> &key ) {
       if ( key.size() != 32 )
         throw std::invalid_argument( "Key must be 32 bytes" );
+      this->key = key;
       key_expansion( key.data() );
     }
 

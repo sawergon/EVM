@@ -36,44 +36,55 @@ namespace model::coordinator {
     for ( auto &[id_i, router] : routers ) {
       router::t_RoutesTable routes = std::make_shared<
           std::unordered_map<size_t, router::routeStruct>>();
-      auto tcBlockId = uni->getBlockId( id_i );
+
       /// Проективная геометрия для роутеров
       auto tc_pp_id = pp.getBlockId( id_i );
       for ( auto &[id_j, router_j] : routers ) {
+        if ( id_i == id_j ) {
+          continue;
+        }
         size_t key_id = 0;
 
         if ( encrypt ) {
           auto               other_pp_id = pp.getBlockId( id_j );
           key_id =
               tc_pp_id.intersect( other_pp_id ).to_int();
-          kuznechik::t_Key key  = kuznechik::generate_random_key();
-          node::t_KeyInfo  info = { key_id, key };
-          router->addPreKey( info );
-          router_j->addPreKey( info );
+          if (router_j->connected(id_i)) {
+            std::cout << "[Coordinator] Router " << id_i << " already connected with " << id_j << std::endl;
+          } else {
+            kuznechik::t_Key key  = kuznechik::generate_random_key();
+            node::t_KeyInfo  info = { key_id, key };
+            std::string      keyStr = std::string(reinterpret_cast<char *>(key.data()), reinterpret_cast<char *>(key.data()) + key.size());
+            router->addPpPreKey( info );
+            router_j->addPpPreKey( info );
+          }
         }
-        routes->insert( { id_j, {key_id, [&]( const std::string &msg ) {
+        routes->insert( { id_j, {key_id, KeyType::PP, [&]( const std::string &msg ) {
                                    router_j->recvMessage( msg );
                                  } } } );
       }
 
+      auto tcBlockId = uni->getBlockId( id_i );
       /// для каждого реализованного узла в сети
       for ( auto &[id, ptr] : nodes ) {
         auto targetBlockId = uni->getBlockId( id );
         /// если узел соеденен с текущим выбранным блоком параллельнгого класса
+        auto key = tcBlockId.intersection( targetBlockId );
         if ( router->isAchived( id ) &&
-             tcBlockId.intersection( targetBlockId ).isValid() ) {
+             key.isValid() ) {
           /// добавляем маршрут в таблицу
-          routes->insert( { id, {0, [&]( const std::string &msg ) {
+          routes->insert( { id, {static_cast<size_t>(key.to_int()), KeyType::Uni, [&]( const std::string &msg ) {
                               ptr->recvMessage( msg );
                             } } } );
         } else {
 
-          auto elseTcBlockId = uni->getBlockId( ptr->getRouter() );
+          auto elseTcBlockId = pp.getBlockId( ptr->getRouter() );
+          auto thisBlockId =  pp.getBlockId( id_i );
           /// если нашли пересечение, то добавляем путь до блока
           /// параллеьльного класса
-          if ( routers[ptr->getRouter()]->isAchived( id ) &&
-               elseTcBlockId.intersection( targetBlockId ).isValid() ) {
-            routes->insert( { id, {0, [&]( const std::string &msg ) {
+          auto key_pp = elseTcBlockId.intersect( thisBlockId );
+          if ( routers[ptr->getRouter()]->isAchived( id ) ) {
+            routes->insert( { id, {static_cast<size_t>(key_pp.to_int()), KeyType::PP, [&]( const std::string &msg ) {
                                 routers[ptr->getRouter()]->recvMessage( msg );
                               } } } );
           }

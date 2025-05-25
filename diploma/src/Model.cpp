@@ -7,7 +7,7 @@ namespace model {
     m_uni         = std::make_shared<unital::Unital>( params.p, params.l );
     m_logger      = logger;
     m_coordinator = std::make_shared<coordinator::Coordinator>( params, table,
-                                                                logger, m_uni );
+                                                                logger, m_uni, isEncrypt );
     for ( const auto &[routerId, nodeList] : *table ) {
       m_routers.insert(
           { routerId,
